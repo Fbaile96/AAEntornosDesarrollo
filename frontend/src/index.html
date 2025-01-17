@@ -35,6 +35,25 @@
 
 <h1>Agenda </h1>
 
+<div id="login-container" style="display: none;">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="username">Usuario:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Ingresar</button>
+    </form>
+    <p id="login-error" style="color: red; display: none;">Credenciales incorrectas</p>
+</div>
+
+<div id="protected-content" style="display: none;">
+    <h2>Contenido Protegido</h2>
+    <p>¡Bienvenido al área protegida!</p>
+    <button id="logout">Cerrar sesión</button>
+</div>
+
+
 <div class="form-container">
     <h2>Agregar / Modificar Contacto</h2>
     <form id="contactForm">
@@ -70,7 +89,8 @@
     <tbody></tbody>
 </table>
 
-<script>
+<script src="./main.js">
+    /*
     const API_URL = 'http://localhost:5000/contactos';
 
     async function fetchContactos() {
@@ -150,7 +170,8 @@
     }
 
     document.getElementById('contactForm').addEventListener('submit', addOrUpdateContacto);
-    fetchContactos();
+    fetchContactos();*/
+
 </script>
 
 </body>

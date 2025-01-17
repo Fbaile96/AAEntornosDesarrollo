@@ -63,3 +63,21 @@ app.delete('/contactos/:id', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+
+// Endpoint de login
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Usuario y contraseña simulados (puedes usar una base de datos aquí)
+    const user = {
+        username: 'admin',
+        password: '1234' // Nunca almacenes contraseñas en texto plano
+    };
+
+    if (username === user.username && password === user.password) {
+        res.json({ success: true, token: 'secure_token_123' }); // Genera un token seguro
+    } else {
+        res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
+    }
+});
+

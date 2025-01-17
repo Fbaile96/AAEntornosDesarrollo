@@ -55,6 +55,18 @@
     </form>
 </div>
 
+<div class="form-container">
+    <h2>Crear Grupo</h2>
+    <form id="groupForm">
+        <label for="grupoNombre">Nombre del Grupo:</label>
+        <input type="text" id="grupoNombre" name="grupoNombre" required>
+        <button type="submit">Crear Grupo</button>
+    </form>
+</div>
+
+<h2>Grupos</h2>
+<div id="groupsContainer"></div>
+
 <h2>Contactos</h2>
 <table id="contactTable">
     <thead>
@@ -70,7 +82,7 @@
     <tbody></tbody>
 </table>
 
-<script>
+<script src="./main.js">/*
     const API_URL = 'http://localhost:5000/contactos';
 
     async function fetchContactos() {
@@ -151,6 +163,7 @@
 
     document.getElementById('contactForm').addEventListener('submit', addOrUpdateContacto);
     fetchContactos();
+*/
 </script>
 
 </body>

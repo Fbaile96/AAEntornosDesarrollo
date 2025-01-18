@@ -40,17 +40,21 @@
     <form id="contactForm">
         <input type="hidden" id="contactId">
         <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre" required><br><br>
-
+        <input type="text" id="nombre" name="nombre" required>
+        <small id="error-nombre" class="error-message"></small><br><br>
+    
         <label for="telefono">Teléfono:</label><br>
-        <input type="text" id="telefono" name="telefono" required><br><br>
-
+        <input type="text" id="telefono" name="telefono" required>
+        <small id="error-telefono" class="error-message"></small><br><br>
+    
         <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email"><br><br>
-
+        <input type="email" id="email" name="email">
+        <small id="error-email" class="error-message"></small><br><br>
+    
         <label for="direccion">Dirección:</label><br>
-        <input type="text" id="direccion" name="direccion"><br><br>
-
+        <input type="text" id="direccion" name="direccion">
+        <small id="error-direccion" class="error-message"></small><br><br>
+    
         <button type="submit">Guardar</button>
     </form>
 </div>
@@ -70,7 +74,8 @@
     <tbody></tbody>
 </table>
 
-<script>
+<script src="./main.js">/*
+
     const API_URL = 'http://localhost:5000/contactos';
 
     async function fetchContactos() {
@@ -150,7 +155,7 @@
     }
 
     document.getElementById('contactForm').addEventListener('submit', addOrUpdateContacto);
-    fetchContactos();
+    fetchContactos();*/
 </script>
 
 </body>

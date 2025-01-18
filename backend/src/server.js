@@ -13,12 +13,23 @@ let contactos = [];
 let currentId = 1;
 
 
-app.post('/contactos', (req, res) => {
-    const { nombre, telefono, email, direccion } = req.body;
-    const nuevoContacto = { id: currentId++, nombre, telefono, email, direccion };
-    contactos.push(nuevoContacto);
-    res.status(201).json({ mensaje: 'Contacto creado exitosamente', contacto: nuevoContacto });
-});
+// Crear un contacto con validación
+app.post('/contactos',
+    [
+        body('nombre').isString().notEmpty().withMessage('El nombre es obligatorio y debe ser una cadena de texto.'),
+        body('telefono').isString().notEmpty().withMessage('El teléfono es obligatorio y debe ser una cadena de texto.'),
+        body('email').optional().isEmail().withMessage('El email debe ser válido.'),
+        body('direccion').optional().isString().withMessage('La dirección debe ser una cadena de texto.')
+    ],
+    validarErrores,
+    (req, res) => {
+        const { nombre, telefono, email, direccion } = req.body;
+        const nuevoContacto = { id: currentContactoId++, nombre, telefono, email, direccion };
+        contactos.push(nuevoContacto);
+        res.status(201).json({ mensaje: 'Contacto creado exitosamente', contacto: nuevoContacto });
+    }
+);
+
 
 app.get('/contactos', (req, res) => {
     res.json(contactos);

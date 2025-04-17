@@ -128,3 +128,10 @@ footer {
     color: #aaa;
     font-size: 14px;
 }
+.error-message {
+    color: red;
+    font-size: 12px;
+    display: none; /* Oculto por defecto */
+    margin-top: -10px;
+    margin-bottom: 10px;
+}

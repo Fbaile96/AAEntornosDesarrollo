@@ -1,157 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda</title>
-    <link rel="stylesheet" href="./styles.css">
+    <title>Agenda Personal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            margin-bottom: 40px;
+        }
+        .menu a {
+            display: block;
             margin: 20px;
+            font-size: 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #007BFF;
+            padding: 15px;
+            width: 200px;
+            margin: 20px auto;
+            border-radius: 10px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .form-container {
-            margin-bottom: 20px;
+        .menu a:hover {
+            background-color: #0056b3;
         }
     </style>
-
 </head>
 <body>
-
-<h1>Agenda </h1>
-
-<div class="form-container">
-    <h2>Agregar / Modificar Contacto</h2>
-    <form id="contactForm">
-        <input type="hidden" id="contactId">
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre" required><br><br>
-
-        <label for="telefono">Teléfono:</label><br>
-        <input type="text" id="telefono" name="telefono" required><br><br>
-
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email"><br><br>
-
-        <label for="direccion">Dirección:</label><br>
-        <input type="text" id="direccion" name="direccion"><br><br>
-
-        <button type="submit">Guardar</button>
-    </form>
-</div>
-
-<h2>Contactos</h2>
-<table id="contactTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-<script>
-    const API_URL = 'http://localhost:5000/contactos';
-
-    async function fetchContactos() {
-        const response = await fetch(API_URL);
-        const contactos = await response.json();
-        const tableBody = document.querySelector('#contactTable tbody');
-        tableBody.innerHTML = '';
-
-        contactos.forEach(contacto => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${contacto.id}</td>
-                <td>${contacto.nombre}</td>
-                <td>${contacto.telefono}</td>
-                <td>${contacto.email || ''}</td>
-                <td>${contacto.direccion || ''}</td>
-                <td>
-                    <button onclick="editContacto(${contacto.id})">Editar</button>
-                    <button onclick="deleteContacto(${contacto.id})">Eliminar</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
-
-    async function addOrUpdateContacto(event) {
-        event.preventDefault();
-
-        const id = document.getElementById('contactId').value;
-        const formData = new FormData(event.target);
-        const data = {
-            nombre: formData.get('nombre'),
-            telefono: formData.get('telefono'),
-            email: formData.get('email'),
-            direccion: formData.get('direccion')
-        };
-
-        if (id) {
-            await fetch(`${API_URL}/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-        } else {
-            await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-        }
-
-        event.target.reset();
-        document.getElementById('contactId').value = '';
-        fetchContactos();
-    }
-
-    async function editContacto(id) {
-        const response = await fetch(`${API_URL}/${id}`);
-        const contacto = await response.json();
-
-        document.getElementById('contactId').value = contacto.id;
-        document.getElementById('nombre').value = contacto.nombre;
-        document.getElementById('telefono').value = contacto.telefono;
-        document.getElementById('email').value = contacto.email || '';
-        document.getElementById('direccion').value = contacto.direccion || '';
-    }
-
-    async function deleteContacto(id) {
-        await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE'
-        });
-        fetchContactos();
-    }
-
-    document.getElementById('contactForm').addEventListener('submit', addOrUpdateContacto);
-    fetchContactos();
-</script>
-
+    <h1>Bienvenido a tu Agenda</h1>
+    <div class="menu">
+        <a href="contactos.html">Gestión de Contactos</a>
+        <a href="eventos.html">Gestión de Eventos</a>
+    </div>
 </body>
 </html>

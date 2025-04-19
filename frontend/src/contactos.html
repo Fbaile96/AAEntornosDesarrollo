@@ -1,162 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contactos</title>
-    <link rel="stylesheet" href="./styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .form-container {
-            margin-bottom: 20px;
-        }
-    </style>
-
+  <meta charset="UTF-8">
+  <title>Agenda de Contactos</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body>
+  <div id="app" class="container mt-4">
+    <h1 class="mb-4">Agenda de Contactos</h1>
 
-<h1>Contactos </h1>
-
-<div class="form-container">
-    <h2>Agregar / Modificar Contacto</h2>
-    <form id="contactForm">
-        <input type="hidden" id="contactId">
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre" required>
-        <small id="error-nombre" class="error-message"></small><br><br>
-    
-        <label for="telefono">Teléfono:</label><br>
-        <input type="text" id="telefono" name="telefono" required>
-        <small id="error-telefono" class="error-message"></small><br><br>
-    
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email">
-        <small id="error-email" class="error-message"></small><br><br>
-    
-        <label for="direccion">Dirección:</label><br>
-        <input type="text" id="direccion" name="direccion">
-        <small id="error-direccion" class="error-message"></small><br><br>
-    
-        <button type="submit">Guardar</button>
+    <form @submit.prevent="guardarContacto">
+      <input type="hidden" v-model="contacto.id">
+      <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control" v-model="contacto.nombre" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Teléfono</label>
+        <input type="text" class="form-control" v-model="contacto.telefono" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" v-model="contacto.email" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Dirección</label>
+        <input type="text" class="form-control" v-model="contacto.direccion" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="button" class="btn btn-secondary ms-2" @click="resetForm">Cancelar</button>
     </form>
-</div>
 
-<h2>Contactos</h2>
-<table id="contactTable">
-    <thead>
+    <hr class="my-4">
+
+    <table class="table table-bordered">
+      <thead>
         <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
         </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+      </thead>
+      <tbody>
+        <tr v-for="c in contactos" :key="c.id">
+          <td>{{ c.id }}</td>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.telefono }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.direccion }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-1" @click="editarContacto(c)">Editar</button>
+            <button class="btn btn-danger btn-sm" @click="eliminarContacto(c.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<script >
+  <script>
+    const { createApp } = Vue;
 
-    const API_URL = 'http://localhost:5000/contactos';
-
-    async function fetchContactos() {
-        const response = await fetch(API_URL);
-        const contactos = await response.json();
-        const tableBody = document.querySelector('#contactTable tbody');
-        tableBody.innerHTML = '';
-
-        contactos.forEach(contacto => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${contacto.id}</td>
-                <td>${contacto.nombre}</td>
-                <td>${contacto.telefono}</td>
-                <td>${contacto.email || ''}</td>
-                <td>${contacto.direccion || ''}</td>
-                <td>
-                    <button onclick="editContacto(${contacto.id})">Editar</button>
-                    <button onclick="deleteContacto(${contacto.id})">Eliminar</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
-
-    async function addOrUpdateContacto(event) {
-        event.preventDefault();
-
-        const id = document.getElementById('contactId').value;
-        const formData = new FormData(event.target);
-        const data = {
-            nombre: formData.get('nombre'),
-            telefono: formData.get('telefono'),
-            email: formData.get('email'),
-            direccion: formData.get('direccion')
+    createApp({
+      data() {
+        return {
+          contacto: {
+            id: null,
+            nombre: '',
+            telefono: '',
+            email: '',
+            direccion: ''
+          },
+          contactos: [],
+          API_URL: 'http://localhost:5000/contactos'
         };
+      },
+      methods: {
+        async cargarContactos() {
+          const res = await fetch(this.API_URL);
+          this.contactos = await res.json();
+        },
+        async guardarContacto() {
+          const { id, nombre, telefono, email, direccion } = this.contacto;
+          const datos = { nombre, telefono, email, direccion };
 
-        if (id) {
-            await fetch(`${API_URL}/${id}`, {
+          try {
+            let res;
+            if (id) {
+              res = await fetch(`${this.API_URL}/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-        } else {
-            await fetch(API_URL, {
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+              });
+            } else {
+              res = await fetch(this.API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+              });
+            }
+
+            if (!res.ok) {
+              const error = await res.json();
+              throw new Error(error.error || 'Error al guardar');
+            }
+
+            this.resetForm();
+            this.cargarContactos();
+          } catch (error) {
+            alert('Error: ' + error.message);
+          }
+        },
+        editarContacto(c) {
+          this.contacto = { ...c };
+        },
+        async eliminarContacto(id) {
+          if (confirm('¿Estás seguro de eliminar este contacto?')) {
+            await fetch(`${this.API_URL}/${id}`, { method: 'DELETE' });
+            this.cargarContactos();
+          }
+        },
+        resetForm() {
+          this.contacto = {
+            id: null,
+            nombre: '',
+            telefono: '',
+            email: '',
+            direccion: ''
+          };
         }
-
-        event.target.reset();
-        document.getElementById('contactId').value = '';
-        fetchContactos();
-    }
-
-    async function editContacto(id) {
-        const response = await fetch(`${API_URL}/${id}`);
-        const contacto = await response.json();
-
-        document.getElementById('contactId').value = contacto.id;
-        document.getElementById('nombre').value = contacto.nombre;
-        document.getElementById('telefono').value = contacto.telefono;
-        document.getElementById('email').value = contacto.email || '';
-        document.getElementById('direccion').value = contacto.direccion || '';
-    }
-
-    async function deleteContacto(id) {
-        await fetch(`${API_URL}/${id}`, {
-            method: 'DELETE'
-        });
-        fetchContactos();
-    }
-
-    document.getElementById('contactForm').addEventListener('submit', addOrUpdateContacto);
-    fetchContactos();
-</script>
-
+      },
+      mounted() {
+        this.cargarContactos();
+      }
+    }).mount('#app');
+  </script>
 </body>
 </html>

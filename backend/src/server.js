@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const eventoRoutes = require('./routes/eventos');
-const contactoRoutes = require('./routes/contactos');
+const eventoRoutes = require('./Routes_temp/eventos');
+const contactoRoutes = require('./Routes_temp/contactos');
 
 const app = express();
 app.use(cors());

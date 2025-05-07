@@ -1,11 +1,11 @@
-const mysql = require('mysql2/promise');
+require('dotenv').config();
+const mariadb = require('mariadb');
 
-// Ajusta estos valores según tu base de datos
-const db = mysql.createPool({
-    host: 'localhost',
-    user: 'fran',
-    password: 'fran',
-    database: 'agenda_web'
+const pool = mariadb.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
-module.exports = db;
+module.exports = pool;

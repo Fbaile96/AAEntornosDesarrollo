@@ -25,28 +25,32 @@ jobs:
           --health-retries=5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js (for frontend and test runner)
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+      - name: Set up Node.js (for frontend and test runner)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm install
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
 
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: npm install
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
 
-    - name: Run backend tests
-      working-directory: ./backend
-      run: npx jest
+      - name: Fix jest permissions
+        working-directory: ./backend
+        run: chmod +x ./node_modules/.bin/jest
 
-    - name: Build Docker image for frontend
-      run: docker build -t aa-frontend ./frontend
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npx jest
 
-    - name: Build Docker image for backend
-      run: docker build -t aa-backend ./backend
+      - name: Build Docker image for frontend
+        run: docker build -t aa-frontend ./frontend
+
+      - name: Build Docker image for backend
+        run: docker build -t aa-backend ./backend

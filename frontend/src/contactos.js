@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/contactos';
+const API_URL = 'http://localhost:3307/contactos';
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchContactos();

@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/eventos';
+const API_URL = 'http://localhost:3307/eventos';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('eventForm');

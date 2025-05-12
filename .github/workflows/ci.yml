@@ -53,7 +53,7 @@ jobs:
         run: |
           until docker exec mariadb mysql -u fran -pfran -e "SELECT 1;" ; do
             echo "Waiting for DB to be ready..."
-            sleep 2
+            sleep 5  # Aumenté el tiempo de espera para mayor estabilidad
           done
 
       - name: Verify DB User and Permissions

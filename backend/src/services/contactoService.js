@@ -10,17 +10,17 @@ exports.obtenerContactoPorId = async (id) => {
     return rows[0];
 };
 
-exports.crearContacto = async ({ nombre, correo, telefono, direccion }) => {
+exports.crearContacto = async ({ nombre, email: email, telefono, direccion }) => {
     const [result] = await db.query(
-        'INSERT INTO contactos (nombre, correo, telefono, direccion) VALUES (?, ?, ?, ?)',
-        [nombre, correo, telefono, direccion]
+        'INSERT INTO contactos (nombre, email, telefono, direccion) VALUES (?, ?, ?, ?)',
+        [nombre, email, telefono, direccion]
     );
-    return { id: result.insertId, nombre, correo, telefono, direccion };
+    return { id: result.insertId, nombre, correo: email, telefono, direccion };
 };
 
 exports.actualizarContacto = async (id, { nombre, correo, telefono, direccion }) => {
     const [result] = await db.query(
-        'UPDATE contactos SET nombre = ?, correo = ?, telefono = ?, direccion = ? WHERE id = ?',
+        'UPDATE contactos SET nombre = ?, email = ?, telefono = ?, direccion = ? WHERE id = ?',
         [nombre, correo, telefono, direccion, id]
     );
     return result.affectedRows > 0 ? { id, nombre, correo, telefono, direccion } : null;

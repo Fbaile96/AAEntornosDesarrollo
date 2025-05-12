@@ -21,7 +21,7 @@ jobs:
         ports:
           - 3306:3306
         volumes:
-          - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql  # Montar el init.sql
+          - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: test-db
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: 'fran'
+      MYSQL_PASSWORD: 'fran'
+      MYSQL_ROOT_PASSWORD: 'rootpassword'
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - test-net
+
+  app:
+    build: .
+    container_name: test-app
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: testdb
+    depends_on:
+      - db
+    networks:
+      - test-net
+
+  test:
+    image: node:16
+    container_name: test-container
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["npm", "run", "test:R"]
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: testdb
+    depends_on:
+      - app
+      - db
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    driver: bridge

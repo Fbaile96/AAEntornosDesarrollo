@@ -11,7 +11,7 @@ describe('eventoController', () => {
   });
 
   test('obtenerEventos devuelve lista de eventos', async () => {
-    const eventosMock = [{ id: 1, nombre: 'Evento Test' }];
+    const eventosMock = [{ id: 1, titulo: 'Evento Test' }];
     eventoService.obtenerEventos.mockResolvedValue(eventosMock);
 
     const req = httpMocks.createRequest();
@@ -24,7 +24,7 @@ describe('eventoController', () => {
   });
 
   test('obtenerEventoPorId devuelve evento existente', async () => {
-    const eventoMock = { id: 1, nombre: 'Evento A' };
+    const eventoMock = { id: 1, titulo: 'Evento A' };
     eventoService.obtenerEventoPorId.mockResolvedValue(eventoMock);
 
     const req = httpMocks.createRequest({ params: { id: 1 } });
@@ -49,10 +49,10 @@ describe('eventoController', () => {
   });
 
   test('crearEvento devuelve nuevo evento y status 201', async () => {
-    const nuevoEvento = { id: 2, nombre: 'Nuevo Evento' };
+    const nuevoEvento = { id: 2, titulo: 'Nuevo Evento' };
     eventoService.crearEvento.mockResolvedValue(nuevoEvento);
 
-    const req = httpMocks.createRequest({ body: { nombre: 'Nuevo Evento' } });
+    const req = httpMocks.createRequest({ body: { titulo: 'Nuevo Evento' } });
     const res = httpMocks.createResponse();
 
     await eventoController.crearEvento(req, res);
@@ -62,10 +62,10 @@ describe('eventoController', () => {
   });
 
   test('actualizarEvento devuelve evento actualizado', async () => {
-    const eventoActualizado = { id: 1, nombre: 'Actualizado' };
+    const eventoActualizado = { id: 1, titulo: 'Actualizado' };
     eventoService.actualizarEvento.mockResolvedValue(eventoActualizado);
 
-    const req = httpMocks.createRequest({ params: { id: 1 }, body: { nombre: 'Actualizado' } });
+    const req = httpMocks.createRequest({ params: { id: 1 }, body: { titulo: 'Actualizado' } });
     const res = httpMocks.createResponse();
 
     await eventoController.actualizarEvento(req, res);
@@ -77,7 +77,7 @@ describe('eventoController', () => {
   test('actualizarEvento devuelve 404 si no se actualiza', async () => {
     eventoService.actualizarEvento.mockResolvedValue(null);
 
-    const req = httpMocks.createRequest({ params: { id: 999 }, body: { nombre: 'Nada' } });
+    const req = httpMocks.createRequest({ params: { id: 999 }, body: { titulo: 'Nada' } });
     const res = httpMocks.createResponse();
 
     await eventoController.actualizarEvento(req, res);

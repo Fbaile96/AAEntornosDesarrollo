@@ -13,11 +13,16 @@ jobs:
     services:
       mariadb:
         image: mariadb:10.5
+        container_name: test-db
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: rootpassword
           MYSQL_DATABASE: testdb
+          MYSQL_USER: fran
+          MYSQL_PASSWORD: fran
         ports:
           - 3306:3306
+        volumes:
+          - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql  # Montar el init.sql
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -44,6 +49,17 @@ jobs:
       - name: Fix jest permissions
         working-directory: ./backend
         run: chmod +x ./node_modules/.bin/jest
+
+      - name: Wait for DB to be ready
+        run: |
+          until docker exec test-db mysql -u fran -pfran -e "SELECT 1;" ; do
+            echo "Waiting for DB to be ready..."
+            sleep 2
+          done
+
+      - name: Verify DB User and Permissions
+        run: |
+          docker exec test-db mysql -u root -prootpassword -e "SELECT user, host FROM mysql.user WHERE user = 'fran';"
 
       - name: Run backend tests
         working-directory: ./backend

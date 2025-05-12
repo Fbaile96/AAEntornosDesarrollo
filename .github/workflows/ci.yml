@@ -21,7 +21,7 @@ jobs:
         ports:
           - 3306:3306
         volumes:
-          - $GITHUB_WORKSPACE/backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+          - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s

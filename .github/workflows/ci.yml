@@ -11,13 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mariadb:
-        image: mariadb:10.5
+      mysql:
+        image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: rootpassword
           MYSQL_DATABASE: testdb
+          MYSQL_USER: fran
+          MYSQL_PASSWORD: fran
         ports:
           - 3306:3306
+        volumes:
+          - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -25,28 +29,43 @@ jobs:
           --health-retries=5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js (for frontend and test runner)
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+      - name: Set up Node.js (for frontend and test runner)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm install
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
 
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: npm install
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
 
-    - name: Run backend tests
-      working-directory: ./backend
-      run: npx jest
+      - name: Fix jest permissions
+        working-directory: ./backend
+        run: chmod +x ./node_modules/.bin/jest
 
-    - name: Build Docker image for frontend
-      run: docker build -t aa-frontend ./frontend
+      - name: Wait for DB to be ready
+        run: |
+          until docker exec mysql mysql -u fran -pfran -e "SELECT 1;" ; do
+            echo "Waiting for DB to be ready..."
+            sleep 5  # Aumenté el tiempo de espera para mayor estabilidad
+          done
 
-    - name: Build Docker image for backend
-      run: docker build -t aa-backend ./backend
+      - name: Verify DB User and Permissions
+        run: |
+          docker exec mysql mysql -u root -prootpassword -e "SELECT user, host FROM mysql.user WHERE user = 'fran';"
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npx jest
+
+      - name: Build Docker image for frontend
+        run: docker build -t aa-frontend ./frontend
+
+      - name: Build Docker image for backend
+        run: docker build -t aa-backend ./backend

@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mariadb
+    container_name: agenda-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: agenda_web
+      MYSQL_USER: fran
+      MYSQL_PASSWORD: fran
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./backend/src/db/init2.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    container_name: agenda-backend
+    depends_on:
+      - db
+    ports:
+      - "3307:3307"
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: agenda-frontend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

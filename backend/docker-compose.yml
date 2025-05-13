@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:8
+    image: mariadb
     container_name: test-db
     environment:
       MYSQL_DATABASE: testdb

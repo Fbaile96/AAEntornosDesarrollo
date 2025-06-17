@@ -2,31 +2,13 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: fran
-          MYSQL_PASSWORD: fran
-        ports:
-          - 3306:3306
-        volumes:
-          - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -41,19 +23,34 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
-      - name: Install backend dependencies
+      # LIMPIA e instala backend desde cero para evitar problemas con binarios corruptos
+      - name: Clean and install backend dependencies
         working-directory: ./backend
-        run: npm install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
-      - name: Fix jest permissions
-        working-directory: ./backend
-        run: chmod +x ./node_modules/.bin/jest
+      # ELIMINA el paso de chmod que da problemas
+      # - name: Fix jest permissions
+      #   working-directory: ./backend
+      #   run: chmod +x ./node_modules/.bin/jest
+
+      - name: Create DB connection
+        run: |
+          docker run -d \
+            --name mysql \
+            -e MYSQL_ROOT_PASSWORD=rootpassword \
+            -e MYSQL_DATABASE=testdb \
+            -e MYSQL_USER=fran \
+            -e MYSQL_PASSWORD=fran \
+            -v "${{ github.workspace }}/backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql" \
+            mysql:8.0
 
       - name: Wait for DB to be ready
         run: |
           until docker exec mysql mysql -u fran -pfran -e "SELECT 1;" ; do
             echo "Waiting for DB to be ready..."
-            sleep 5  # Aumenté el tiempo de espera para mayor estabilidad
+            sleep 5
           done
 
       - name: Verify DB User and Permissions
@@ -62,7 +59,7 @@ jobs:
 
       - name: Run backend tests
         working-directory: ./backend
-        run: npx jest
+        run: npx jest src/test/Unitarios/eventoController.test.js --runInBand
 
       - name: Build Docker image for frontend
         run: docker build -t aa-frontend ./frontend

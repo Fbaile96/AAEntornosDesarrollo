@@ -8,14 +8,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -33,8 +34,8 @@ jobs:
 
       - name: Wait for MySQL to be ready
         run: |
-          until docker exec backend_mysql_1 mysql -u fran -pfran -e "SELECT 1;" ; do
-            echo "Waiting for DB to be ready..."
+          until docker exec $(docker ps -qf "ancestor=mysql:8.0") mysql -ufran -pfran -e "SELECT 1;" 2>/dev/null; do
+            echo "Waiting for MySQL to be ready..."
             sleep 5
           done
 
@@ -46,6 +47,6 @@ jobs:
         working-directory: ./backend
         run: npm run integration-test
 
-      - name: Shutdown Docker Compose
+      - name: Shut down Docker Compose
         working-directory: ./backend
         run: docker compose -f docker-compose.dev.yaml down

@@ -55,7 +55,7 @@ jobs:
 
       - name: Run backend tests
         working-directory: ./backend
-        run: npx test:R
+        run: npx jest
 
       - name: Build Docker image for frontend
         run: docker build -t aa-frontend ./frontend

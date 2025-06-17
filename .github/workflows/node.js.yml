@@ -1,0 +1,51 @@
+name: Unit and integration tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Start MySQL with Docker Compose
+        working-directory: ./backend
+        run: docker compose -f docker-compose.dev.yaml up -d
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until docker exec backend_mysql_1 mysql -u fran -pfran -e "SELECT 1;" ; do
+            echo "Waiting for DB to be ready..."
+            sleep 5
+          done
+
+      - name: Run unit tests
+        working-directory: ./backend
+        run: npm run unit-test
+
+      - name: Run integration tests
+        working-directory: ./backend
+        run: npm run integration-test
+
+      - name: Shutdown Docker Compose
+        working-directory: ./backend
+        run: docker compose -f docker-compose.dev.yaml down

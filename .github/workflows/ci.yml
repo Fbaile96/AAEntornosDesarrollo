@@ -53,12 +53,12 @@ jobs:
         run: |
           docker exec mysql mysql -u root -prootpassword -e "SELECT user, host FROM mysql.user WHERE user = 'fran';"
 
-      - name: Run backend tests
-        working-directory: ./backend
-        run: npx jest src/test/Unitarios/eventoController.test.js --runInBand
-
       - name: Build Docker image for frontend
         run: docker build -t aa-frontend ./frontend
 
       - name: Build Docker image for backend
         run: docker build -t aa-backend ./backend
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npx jest src/test/Unitarios/eventoController.test.js --runInBand

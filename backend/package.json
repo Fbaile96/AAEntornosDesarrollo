@@ -4,8 +4,8 @@
   "description": "backend de actividad de aprendizae",
   "main": "index.js",
   "scripts": {
-    "test:C": "jest --testPathPattern=src/test/Controllers",
-    "test:R": "jest --testPathPattern=src/test/Routes",
+    "integration-test": "jest --testPathPattern=src/test/Integracion",
+    "unit-test": "jest --testPathPattern=src/test/Unitarios",
     "test": "jest",
     "start": "node server.js"
   },

@@ -10,7 +10,7 @@ services:
     ports:
       - "3308:3306"
     volumes:
-      - ./backend/src/db/init2.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
 

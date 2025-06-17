@@ -27,10 +27,6 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      - name: Fix jest permissions
-        working-directory: ./backend
-        run: chmod +x ./node_modules/.bin/jest
-
       - name: Create DB connection
         run: |
           docker run -d \
@@ -55,7 +51,7 @@ jobs:
 
       - name: Run backend tests
         working-directory: ./backend
-        run: npx jest
+        run: npx jest --runInBand
 
       - name: Build Docker image for frontend
         run: docker build -t aa-frontend ./frontend
